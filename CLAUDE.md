@@ -72,70 +72,38 @@ After completing any of these milestones:
 
 ## Architecture Overview
 
-### Core Concepts
-
-**Agents**: Independent AI entities with their own reasoning and response generation. Each agent has parameters controlling its behavior, debate style, and knowledge.
-
-**Debates**: Structured discussions where multiple agents take turns presenting arguments on a topic. Each debate has:
-- A topic/proposition
-- Multiple participating agents
-- A debate structure (opening statements, rebuttals, conclusions)
-- Conversation history and state
-
-**Orchestrator**: FastAPI backend service managing debate flow, coordinating agent responses, and maintaining debate state. Handles:
-- Debate initialization and management
-- Agent communication and prompting
-- Response validation and formatting (using Pydantic models)
-- Debate history and logging
-- Real-time communication via WebSockets
-
-### System Architecture
+### System Flow
 
 ```
 ┌──────────────────────┐
-│  Frontend UI         │  (React + Vite + TypeScript)
-│  - Debate interface  │
-│  - View debates      │
-│  - Create/manage     │
+│  Frontend UI         │  (React + TypeScript)
 └──────────┬───────────┘
-           │ WebSocket
-           │ (Real-time debate updates)
-           │
+           │ WebSocket (Real-time)
 ┌──────────▼───────────┐
 │   FastAPI Backend    │  (Python + Poetry)
-│  - WebSocket handler │
-│  - Debate mgmt       │
+│  - Debate management │
 │  - Agent orchestration
-│  - Pydantic models   │
 └──────────┬───────────┘
-           │
-┌──────────▼───────────┐
-│  Agent Manager       │
-│  - Queue/routing     │
-│  - Orchestrate turns │
-│  - Format prompts    │
-└──────────────────────┘
            │
        ┌───┴───┐
        │ Agents│  (LLM API calls)
        └───────┘
 ```
 
-### Key Modules/Components
+### Core Components
 
-**Backend (FastAPI)**:
-- **Models** (Pydantic): Define debate, agent, message, and request/response schemas
-- **Agent Module**: Defines agent behavior, prompting templates, and response parsing
-- **Debate Module**: Core debate logic, turn management, and history tracking
-- **Orchestrator**: Controls debate flow and agent coordination
-- **WebSocket Manager**: Handles real-time connections and message broadcasting
-- **Routes**: REST endpoints for debate management and WebSocket endpoint for live updates
+- **Agents**: Independent AI entities with configurable LLM models (Claude, GPT-4) and debate roles (FOR/AGAINST)
+- **Debates**: Structured multi-round discussions with full conversation history and state tracking
+- **Orchestrator**: Backend service managing debate flow, turn execution, and real-time event broadcasting
+- **WebSocket**: Real-time communication layer for live debate updates
 
-**Frontend (React + Vite)**:
-- **Components**: Debate view, agent status, message display
-- **WebSocket Hook**: Manages connection to backend and real-time updates
-- **State Management**: Tracks debate state, agent responses, and UI state
-- **TypeScript Types**: Mirrors Pydantic models from backend for type safety
+### Key Modules
+
+**Backend:** `models/` (Pydantic schemas), `services/` (LLM clients, orchestrator, debate manager), `routers/` (REST + WebSocket APIs), `storage/` (in-memory repository)
+
+**Frontend:** Components, WebSocket hooks, state management, TypeScript types mirroring backend models
+
+For detailed architecture, component relationships, and design decisions, see [backend/ARCHITECTURE.md](backend/ARCHITECTURE.md).
 
 ## Important Implementation Details
 
