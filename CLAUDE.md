@@ -36,6 +36,40 @@ This is a multi-agent AI debate system with a full-stack architecture. Multiple 
 - **View git changes**: `git diff` and `git status`
 - **Commit changes**: Always use conventional commits (feat:, fix:, refactor:, etc.)
 
+## Git Workflow & Commit Guidelines
+
+**CRITICAL**: Claude must proactively suggest commits after completing each logical milestone. DO NOT accumulate 500+ lines without committing.
+
+### When Claude Should Commit
+
+After completing any of these milestones:
+- **Foundation**: Core models, config, base classes (commit before building features on top)
+- **Feature slice**: One complete unit (e.g., model + service + route, or component + hook)
+- **Tests**: After writing tests for a module or after all tests pass
+- **Integration**: After successfully connecting systems (frontend ↔ backend, new library, WebSocket)
+- **Docs**: API documentation, examples, README updates
+
+### Good Commit Size
+
+- **Atomic**: One logical change that stands on its own
+- **Complete**: Code works and tests pass (if applicable)
+- **Reasonable**: Typically 50-500 lines, but use judgment for architectural changes
+
+**Example breakdown** for a large feature:
+1. `feat: add export data models`
+2. `feat: implement JSON export service`
+3. `feat: add export endpoints to debates router`
+4. `test: add export functionality tests`
+
+### Claude Behavior
+
+**MUST do**:
+- Pause after each milestone and say "I've completed [X]. Let me commit this before continuing."
+- Never accumulate 500+ lines without committing
+- Commit before switching contexts (backend → frontend, or between unrelated features)
+
+**Commit message format**: Always use conventional commits (`feat:`, `fix:`, `test:`, `docs:`, etc.) with Co-Authored-By footer.
+
 ## Architecture Overview
 
 ### Core Concepts
