@@ -192,22 +192,24 @@ manager.register_event_callback(handle_events)
 
 ## Architecture
 
-### LLM Client System
+For system architecture and design details, see **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 
-The system supports multiple LLM providers through a factory pattern:
+## Advanced Usage
+
+### Direct LLM Client Access
+
+Use LLM clients independently from debates:
 
 ```python
 from models.llm import LLMConfig, ModelProvider
 from services.llm import create_llm_client
 
-# Configure an LLM
+# Configure and create client
 config = LLMConfig(
     provider=ModelProvider.ANTHROPIC,
     model_name="claude-3-5-sonnet-20241022",
     api_key_env_var="ANTHROPIC_API_KEY"
 )
-
-# Create client
 client = create_llm_client(config)
 
 # Send message
@@ -219,19 +221,14 @@ response = await client.send_message(
 )
 ```
 
-### Supported Providers
+**Supported Providers:** Anthropic (Claude models), OpenAI (GPT-4 models)
 
-- **Anthropic**: Claude models (claude-3-5-sonnet-20241022, etc.)
-- **OpenAI**: GPT models (gpt-4o, gpt-4-turbo, etc.)
+### Custom Prompt Building
 
-### Prompt Building
+Build prompts programmatically:
 
 ```python
-from services.prompt_builder import (
-    build_debater_prompt,
-    build_judge_prompt,
-    format_history_for_context
-)
+from services.prompt_builder import build_debater_prompt, format_history_for_context
 
 # Build system prompt for debater
 system_prompt = build_debater_prompt(
@@ -241,7 +238,7 @@ system_prompt = build_debater_prompt(
     total_rounds=5
 )
 
-# Format debate history
+# Format debate history for context
 context = format_history_for_context(
     history=messages,
     topic="AI will benefit humanity",
@@ -286,11 +283,13 @@ See `manual_tests/README.md` for detailed information about each test, expected 
 
 ---
 
-## API Documentation
+## Documentation
 
-For complete REST and WebSocket API documentation, see:
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Full API reference
-- **[MANUAL_TESTING.md](./MANUAL_TESTING.md)** - Manual testing guide
+For more information, see:
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Complete REST and WebSocket API reference
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and design decisions
+- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Common issues and debugging guide
+- **[manual_tests/README.md](./manual_tests/README.md)** - Manual testing guide with real LLMs
 
 ### Quick API Example
 
