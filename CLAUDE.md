@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Claude Code Behavior
+
+**IMPORTANT**: Always proactively use Context7 MCP when library/API documentation, code generation, setup, or configuration steps are needed. Do not wait for explicit requests - if you identify that up-to-date documentation or code examples would help with the current task, use Context7 automatically.
+
 ## Project Overview
 
 This is a multi-agent AI debate system with a full-stack architecture. Multiple AI agents engage in structured debates on various topics, with a backend orchestrating the debate flow and a frontend UI for viewing and managing debates.
