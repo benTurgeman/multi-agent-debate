@@ -36,6 +36,41 @@ This is a multi-agent AI debate system with a full-stack architecture. Multiple 
 - **View git changes**: `git diff` and `git status`
 - **Commit changes**: Always use conventional commits (feat:, fix:, refactor:, etc.)
 
+## Branch Management
+
+**NEVER work directly on main.** Always use feature branches.
+
+### Branch Naming Convention
+- Features: `feat/short-description` (e.g., `feat/export-api`)
+- Fixes: `fix/short-description` (e.g., `fix/websocket-crash`)
+- Refactors: `refactor/short-description` (e.g., `refactor/debate-state`)
+- Docs: `docs/short-description` (e.g., `docs/api-examples`)
+
+### Working with Branches
+
+**Without Worktrees (Current Method)**
+- Create branch: `git checkout -b feat/description`
+- Switch branches: `git checkout branch-name`
+- Merge when done: `git checkout main && git merge feat/description && git branch -d feat/description`
+
+**With Worktrees (Future)**
+- Create worktree: `git worktree add ../multi-agent-debate-feature feat/feature-name`
+- Work in separate directory for each feature
+- Cleanup: `git worktree remove ../multi-agent-debate-feature`
+- No workflow changes needed—just different directories
+
+### Claude's Branch Rules
+
+**CRITICAL**: Before ANY file edits, Claude MUST:
+1. Run `git branch --show-current` to check current branch
+2. If on `main`: **STOP immediately** and ask user to create/switch to a feature branch
+3. If on feature branch: Proceed with work normally
+
+**During work**:
+- Commit following existing guidelines (atomic commits, conventional commit format)
+- Mention branch name in status updates: "Completed X on branch `feat/feature-name`"
+- When feature is complete, ask user if they want to merge or create a PR
+
 ## Git Workflow & Commit Guidelines
 
 **CRITICAL**: Claude must proactively suggest commits after completing each logical milestone. DO NOT accumulate 500+ lines without committing.
