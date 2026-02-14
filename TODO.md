@@ -16,12 +16,6 @@
 - [x] Create TypeScript type system (8 type files mirroring backend Pydantic models)
 - [x] Set up Zustand stores (debateConfigStore, debateStateStore, uiStore)
 
-**Last Commit:** `b092d08` - feat: add TypeScript type system and Zustand state stores
-
----
-
-## 🚧 In Progress
-
 ### Phase 2: Core UI Components
 - [x] Build atomic components (`components/atoms/`)
   - [x] Button.tsx
@@ -30,21 +24,33 @@
   - [x] Badge.tsx
   - [x] StatusIndicator.tsx
   - [x] LoadingSpinner.tsx
+- [x] Build molecular components (`components/molecules/`)
+  - [x] AgentCard.tsx
+  - [x] MessageBubble.tsx
+  - [x] ThinkingIndicator.tsx
+  - [x] RoundIndicator.tsx
+- [x] Create layout templates (`components/templates/`)
+  - [x] Header.tsx
+  - [x] DebateLayout.tsx
+
+**Last Commit:** `a36d9ab` - feat: add atomic UI components for debate interface
+
+---
+
+## 🚧 In Progress
+
+### Phase 3: Configuration Panel
+- [ ] Build debate config components (`organisms/DebateConfig/`)
+  - [ ] index.tsx (main container)
+  - [ ] TopicInput.tsx
+  - [ ] ParticipantsList.tsx
+  - [ ] AddParticipantModal.tsx
+  - [ ] RoundsInput.tsx
+  - [ ] JudgeSelect.tsx
 
 ---
 
 ## 📋 Up Next
-
-### Phase 2: Core UI Components (continued)
-- [ ] Build molecular components (`components/molecules/`)
-  - [ ] AgentCard.tsx
-  - [ ] MessageBubble.tsx
-  - [ ] ThinkingIndicator.tsx
-  - [ ] RoundIndicator.tsx
-
-- [ ] Create layout templates (`components/templates/`)
-  - [ ] Header.tsx
-  - [ ] DebateLayout.tsx
 
 ### Phase 3: Configuration Panel
 - [ ] Build debate config components (`organisms/DebateConfig/`)
