@@ -23,13 +23,13 @@
 ## 🚧 In Progress
 
 ### Phase 2: Core UI Components
-- [ ] Build atomic components (`components/atoms/`)
-  - [ ] Button.tsx
-  - [ ] Input.tsx
-  - [ ] Select.tsx
-  - [ ] Badge.tsx
-  - [ ] StatusIndicator.tsx
-  - [ ] LoadingSpinner.tsx
+- [x] Build atomic components (`components/atoms/`)
+  - [x] Button.tsx
+  - [x] Input.tsx
+  - [x] Select.tsx
+  - [x] Badge.tsx
+  - [x] StatusIndicator.tsx
+  - [x] LoadingSpinner.tsx
 
 ---
 
