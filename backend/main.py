@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import debates, websocket
+from routers import debates, providers, websocket
 from routers.debates import get_debate_manager
 from routers.websocket import setup_websocket_broadcasting
 
@@ -65,6 +65,7 @@ def health_check():
 
 # Mount routers
 app.include_router(debates.router)
+app.include_router(providers.router)
 app.include_router(websocket.router)
 
 logger.info("Routers mounted successfully")
