@@ -48,34 +48,29 @@
 - [x] Integrate config store with UI
 - [x] Add form validation
 
-**Last Commit:** `b8d274a` - feat: add molecular components and layout templates
+### Phase 4: WebSocket & Live Debate
+- [x] Build WebSocket hook (`hooks/useDebateWebSocket.ts`)
+  - [x] Connection management
+  - [x] Auto-reconnection with exponential backoff
+  - [x] Event handling
+  - [x] Heartbeat (ping every 30s)
+- [x] Build live debate panel (`organisms/LiveDebate/`)
+  - [x] index.tsx
+  - [x] MessageList.tsx
+  - [x] Auto-scroll logic
+- [x] Create auto-scroll hook (`hooks/useAutoScroll.ts`)
+
+**Last Commit:** `71f1aea` - feat: add WebSocket integration and live debate view
 
 ---
 
 ## 🚧 In Progress
 
-### Phase 4: WebSocket & Live Debate
-- [ ] Build WebSocket hook (`hooks/useDebateWebSocket.ts`)
-  - [ ] Connection management
-  - [ ] Auto-reconnection with exponential backoff
-  - [ ] Event handling
-  - [ ] Heartbeat (ping every 30s)
+_No tasks currently in progress_
 
 ---
 
 ## 📋 Up Next
-
-### Phase 4: WebSocket & Live Debate (continued)
-- [ ] Build WebSocket hook (`hooks/useDebateWebSocket.ts`)
-  - [ ] Connection management
-  - [ ] Auto-reconnection with exponential backoff
-  - [ ] Event handling
-  - [ ] Heartbeat (ping every 30s)
-- [ ] Build live debate panel (`organisms/LiveDebate/`)
-  - [ ] index.tsx
-  - [ ] MessageList.tsx
-  - [ ] Auto-scroll logic
-- [ ] Create auto-scroll hook (`hooks/useAutoScroll.ts`)
 
 ### Phase 5: Participants Panel
 - [ ] Build participants panel (`organisms/ParticipantsPanel/`)
