@@ -7,5 +7,5 @@ export type { LiveDebateProps } from './LiveDebate';
 export { ParticipantsPanel } from './ParticipantsPanel';
 export type { ParticipantsPanelProps } from './ParticipantsPanel';
 
-// TODO: Add remaining organisms
-// export { VerdictPanel } from './VerdictPanel';
+export { VerdictPanel } from './VerdictPanel';
+export type { VerdictPanelProps } from './VerdictPanel';

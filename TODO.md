@@ -67,6 +67,18 @@
 - [x] Show agent status (thinking/waiting/completed)
 - [x] Display message counts
 
+### Phase 6: Verdict Panel
+- [x] Build verdict panel (`organisms/VerdictPanel/`)
+  - [x] index.tsx (with slide-up animation)
+  - [x] WinnerAnnouncement.tsx
+  - [x] ScoreCards.tsx
+  - [x] KeyArguments.tsx
+  - [x] DebateSummary.tsx
+- [x] Add export functionality
+  - [x] JSON export
+  - [x] Markdown export
+  - [x] Text export
+
 **Last Commit:** `71f1aea` - feat: add WebSocket integration and live debate view
 
 ---
@@ -78,18 +90,6 @@ _No tasks currently in progress_
 ---
 
 ## 📋 Up Next
-
-### Phase 6: Verdict Panel
-- [ ] Build verdict panel (`organisms/VerdictPanel/`)
-  - [ ] index.tsx (with slide-up animation)
-  - [ ] WinnerAnnouncement.tsx
-  - [ ] ScoreCards.tsx
-  - [ ] KeyArguments.tsx
-  - [ ] DebateSummary.tsx
-- [ ] Add export functionality
-  - [ ] JSON export
-  - [ ] Markdown export
-  - [ ] Text export
 
 ### Phase 7: Integration & Polish
 - [ ] Integrate all components in App.tsx
