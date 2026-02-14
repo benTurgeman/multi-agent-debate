@@ -60,6 +60,13 @@
   - [x] Auto-scroll logic
 - [x] Create auto-scroll hook (`hooks/useAutoScroll.ts`)
 
+### Phase 5: Participants Panel
+- [x] Build participants panel (`organisms/ParticipantsPanel/`)
+  - [x] index.tsx
+  - [x] AgentStatsCard.tsx
+- [x] Show agent status (thinking/waiting/completed)
+- [x] Display message counts
+
 **Last Commit:** `71f1aea` - feat: add WebSocket integration and live debate view
 
 ---
@@ -71,13 +78,6 @@ _No tasks currently in progress_
 ---
 
 ## 📋 Up Next
-
-### Phase 5: Participants Panel
-- [ ] Build participants panel (`organisms/ParticipantsPanel/`)
-  - [ ] index.tsx
-  - [ ] AgentStatsCard.tsx
-- [ ] Show agent status (thinking/waiting/completed)
-- [ ] Display message counts
 
 ### Phase 6: Verdict Panel
 - [ ] Build verdict panel (`organisms/VerdictPanel/`)
