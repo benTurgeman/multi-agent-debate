@@ -33,40 +33,39 @@
   - [x] Header.tsx
   - [x] DebateLayout.tsx
 
-**Last Commit:** `a36d9ab` - feat: add atomic UI components for debate interface
+### Phase 3: Configuration Panel
+- [x] Create API client modules (`api/`)
+  - [x] debates.ts
+  - [x] providers.ts
+  - [x] config.ts (base API client)
+- [x] Build debate config components (`organisms/DebateConfig/`)
+  - [x] index.tsx (main container)
+  - [x] TopicInput.tsx
+  - [x] ParticipantsList.tsx
+  - [x] AddParticipantModal.tsx
+  - [x] RoundsInput.tsx
+  - [x] JudgeSelect.tsx
+- [x] Integrate config store with UI
+- [x] Add form validation
+
+**Last Commit:** `b8d274a` - feat: add molecular components and layout templates
 
 ---
 
 ## 🚧 In Progress
 
-### Phase 3: Configuration Panel
-- [ ] Build debate config components (`organisms/DebateConfig/`)
-  - [ ] index.tsx (main container)
-  - [ ] TopicInput.tsx
-  - [ ] ParticipantsList.tsx
-  - [ ] AddParticipantModal.tsx
-  - [ ] RoundsInput.tsx
-  - [ ] JudgeSelect.tsx
+### Phase 4: WebSocket & Live Debate
+- [ ] Build WebSocket hook (`hooks/useDebateWebSocket.ts`)
+  - [ ] Connection management
+  - [ ] Auto-reconnection with exponential backoff
+  - [ ] Event handling
+  - [ ] Heartbeat (ping every 30s)
 
 ---
 
 ## 📋 Up Next
 
-### Phase 3: Configuration Panel
-- [ ] Build debate config components (`organisms/DebateConfig/`)
-  - [ ] index.tsx (main container)
-  - [ ] TopicInput.tsx
-  - [ ] ParticipantsList.tsx
-  - [ ] AddParticipantModal.tsx
-  - [ ] RoundsInput.tsx
-  - [ ] JudgeSelect.tsx
-- [ ] Create API client modules (`api/`)
-  - [ ] debates.ts
-  - [ ] providers.ts
-- [ ] Integrate config store with UI
-- [ ] Add form validation
-
-### Phase 4: WebSocket & Live Debate
+### Phase 4: WebSocket & Live Debate (continued)
 - [ ] Build WebSocket hook (`hooks/useDebateWebSocket.ts`)
   - [ ] Connection management
   - [ ] Auto-reconnection with exponential backoff
