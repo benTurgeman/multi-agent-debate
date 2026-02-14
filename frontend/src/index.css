@@ -1,18 +1,71 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@import "tailwindcss";
+
+/* Custom dark mode variant - responds to .dark class on ancestor */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom theme configuration */
+@theme {
+  /* Dark mode color palette */
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-700: #334155;
+  --color-slate-600: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+  --color-slate-200: #e2e8f0;
+  --color-slate-100: #f1f5f9;
+
+  /* Debate stance colors */
+  --color-pro: #10b981;
+  --color-con: #ef4444;
+  --color-judge: #8b5cf6;
+
+  /* Accent colors */
+  --color-blue-500: #3b82f6;
+  --color-green-500: #22c55e;
+  --color-yellow-500: #eab308;
+  --color-red-500: #ef4444;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.3s ease-in;
+  --animate-slide-up: slide-up 0.5s ease-out;
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   width: 100%;
+  min-height: 100vh;
+}
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
