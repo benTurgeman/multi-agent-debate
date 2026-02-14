@@ -1,31 +1,163 @@
-import { useState, useEffect } from 'react'
+/**
+ * Main App component
+ * Integrates all organisms into a complete debate application
+ */
+
+import { useState, useEffect, useCallback } from 'react';
+import { Header } from './components/templates/Header';
+import { DebateLayout } from './components/templates/DebateLayout';
+import { DebateConfig } from './components/organisms/DebateConfig';
+import { LiveDebate } from './components/organisms/LiveDebate';
+import { ParticipantsPanel } from './components/organisms/ParticipantsPanel';
+import { VerdictPanel } from './components/organisms/VerdictPanel';
+import { useDebateConfigStore, useDebateStateStore } from './stores';
+import { useDebateWebSocket } from './hooks/useDebateWebSocket';
+import { debatesApi } from './api/debates';
+import { DebateStatus } from './types';
+import type { StatusType } from './components/atoms';
 
 function App() {
-  const [status, setStatus] = useState<string>('Loading...')
+  // Local state for app lifecycle
+  const [debateId, setDebateId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get config and state stores
+  const { getConfig } = useDebateConfigStore();
+  const { debate, connectionState, updateDebateStatus, setDebate } =
+    useDebateStateStore();
+
+  // WebSocket hook
+  const { connect, disconnect } = useDebateWebSocket({
+    debug: true,
+    onConnect: () => {
+      console.log('Connected to debate WebSocket');
+    },
+    onError: (error) => {
+      console.error('WebSocket error:', error);
+      setError('WebSocket connection failed');
+    },
+  });
 
   // Enable dark mode by default
   useEffect(() => {
-    document.documentElement.classList.add('dark')
-  }, [])
+    document.documentElement.classList.add('dark');
+  }, []);
 
+  /**
+   * Create and start debate
+   */
+  const handleStartDebate = useCallback(async () => {
+    const config = getConfig();
+    if (!config) {
+      setError('Invalid debate configuration');
+      return;
+    }
+
+    setIsCreating(true);
+    setError(null);
+
+    try {
+      // Step 1: Create debate
+      const createResponse = await debatesApi.create(config);
+      const newDebateId = createResponse.debate_id;
+      setDebateId(newDebateId);
+
+      // Step 2: Connect WebSocket
+      connect(newDebateId);
+
+      // Step 3: Fetch initial state
+      const debateState = await debatesApi.get(newDebateId);
+      setDebate(debateState);
+
+      // Step 4: Start debate execution
+      setIsStarting(true);
+      await debatesApi.start(newDebateId);
+      updateDebateStatus(DebateStatus.IN_PROGRESS);
+
+      setIsStarting(false);
+    } catch (err) {
+      console.error('Failed to start debate:', err);
+      setError(err instanceof Error ? err.message : 'Failed to start debate');
+      setIsCreating(false);
+      setIsStarting(false);
+    }
+
+    setIsCreating(false);
+  }, [getConfig, connect, setDebate, updateDebateStatus]);
+
+  /**
+   * Map connection state to status indicator type
+   */
+  const getConnectionStatus = (): StatusType => {
+    switch (connectionState) {
+      case 'connected':
+        return 'connected';
+      case 'connecting':
+        return 'connecting';
+      case 'error':
+        return 'error';
+      case 'disconnected':
+        return 'disconnected';
+      default:
+        return 'disconnected';
+    }
+  };
+
+  /**
+   * Determine if debate is active
+   */
+  const isDebateActive = debate?.status === DebateStatus.IN_PROGRESS;
+
+  /**
+   * Determine if debate is complete
+   */
+  const isDebateComplete = debate?.status === DebateStatus.COMPLETED;
+
+  /**
+   * Cleanup on unmount
+   */
   useEffect(() => {
-    fetch('/health')
-      .then(res => res.json())
-      .then(data => setStatus(data.status))
-      .catch(() => setStatus('Error connecting to backend'))
-  }, [])
+    return () => {
+      disconnect();
+    };
+  }, [disconnect]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 p-8">
-      <h1 className="text-4xl font-bold mb-4">Multi-Agent Debate System</h1>
-      <p className="text-slate-400 mb-6">Welcome to the debate platform</p>
-      <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
-        <p className="text-slate-300">
-          Backend status: <strong className="text-pro">{status}</strong>
-        </p>
-      </div>
-    </div>
-  )
+    <DebateLayout
+      header={
+        <Header
+          connectionStatus={debateId ? getConnectionStatus() : undefined}
+          isDebateActive={isDebateActive}
+          isDebateComplete={isDebateComplete}
+          isStarting={isStarting}
+        />
+      }
+      leftPanel={
+        <DebateConfig
+          onStartDebate={handleStartDebate}
+          isCreating={isCreating || isStarting}
+        />
+      }
+      centerPanel={
+        <div className="h-full">
+          {error && (
+            <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
+          <LiveDebate />
+        </div>
+      }
+      rightPanel={<ParticipantsPanel />}
+      bottomPanel={
+        <VerdictPanel
+          show={isDebateComplete && !!debate?.judge_result}
+        />
+      }
+    />
+  );
 }
 
-export default App
+export default App;
