@@ -27,7 +27,7 @@ export const debatesApi = {
   create: async (config: DebateConfig): Promise<CreateDebateResponse> => {
     return apiFetch<CreateDebateResponse>('/api/debates', {
       method: 'POST',
-      body: JSON.stringify(config),
+      body: JSON.stringify({ config }), // Wrap config in request object
     });
   },
 
