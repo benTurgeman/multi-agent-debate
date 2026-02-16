@@ -35,7 +35,8 @@ export const debatesApi = {
    * Get debate state by ID
    */
   get: async (debateId: string): Promise<DebateState> => {
-    return apiFetch<DebateState>(`/api/debates/${debateId}`);
+    const response = await apiFetch<{ debate: DebateState }>(`/api/debates/${debateId}`);
+    return response.debate; // Extract debate from wrapper
   },
 
   /**
