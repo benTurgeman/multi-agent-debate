@@ -140,14 +140,16 @@ def setup_websocket_broadcasting(debate_manager: DebateManager) -> None:
             event: Debate event
         """
         # Convert payload to JSON-serializable format
-        # This handles Pydantic models and datetime objects
-        import json
+        # This handles Pydantic models, datetime objects, and nested structures
+        from datetime import datetime as dt
         from pydantic import BaseModel
 
         def serialize_payload(obj):
             """Recursively serialize payload to JSON-compatible types."""
             if isinstance(obj, BaseModel):
                 return obj.model_dump(mode='json')
+            elif isinstance(obj, dt):
+                return obj.isoformat()
             elif isinstance(obj, dict):
                 return {k: serialize_payload(v) for k, v in obj.items()}
             elif isinstance(obj, list):
