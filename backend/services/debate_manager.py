@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from typing import Callable, Optional, Any, Dict
 from enum import Enum
 
+from pydantic import ValidationError
+
 from models.debate import DebateState, DebateConfig, DebateStatus
 from models.judge import JudgeResult, AgentScore
 from models.message import Message
@@ -446,6 +448,62 @@ class DebateManager:
                 winner_id=agents[0].agent_id,
                 winner_name=agents[0].name,
                 key_arguments=["Unable to extract key arguments"],
+            )
+
+        except ValidationError as e:
+            logger.warning(f"Judge response missing required fields: {e}")
+            logger.debug(f"Partial judge data: {judge_data}")
+
+            # Try to use partial data from judge response
+            summary = judge_data.get("summary", "Judge provided partial evaluation.")
+            key_arguments = judge_data.get("key_arguments", [])
+
+            # Extract or create agent scores
+            agent_scores = []
+            raw_scores = judge_data.get("agent_scores", [])
+
+            if raw_scores:
+                # Use provided scores, filling in missing fields
+                for score_data in raw_scores:
+                    try:
+                        agent_scores.append(AgentScore(**score_data))
+                    except (ValidationError, TypeError):
+                        # If individual score is invalid, skip it
+                        continue
+
+            # Fill in missing scores with defaults
+            scored_agent_ids = {s.agent_id for s in agent_scores}
+            for agent in agents:
+                if agent.agent_id not in scored_agent_ids:
+                    agent_scores.append(
+                        AgentScore(
+                            agent_id=agent.agent_id,
+                            agent_name=agent.name,
+                            score=5.0,
+                            reasoning="Score not provided by judge.",
+                        )
+                    )
+
+            # Determine winner from scores or use provided winner_id
+            winner_id = judge_data.get("winner_id")
+            winner_name = judge_data.get("winner_name")
+
+            if not winner_id and agent_scores:
+                # Find agent with highest score
+                best_score = max(agent_scores, key=lambda s: s.score)
+                winner_id = best_score.agent_id
+                winner_name = best_score.agent_name
+            elif not winner_id:
+                # Default to first agent
+                winner_id = agents[0].agent_id
+                winner_name = agents[0].name
+
+            return JudgeResult(
+                summary=summary,
+                agent_scores=agent_scores,
+                winner_id=winner_id,
+                winner_name=winner_name,
+                key_arguments=key_arguments,
             )
 
         except Exception as e:
