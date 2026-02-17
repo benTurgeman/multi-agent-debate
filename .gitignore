@@ -24,6 +24,9 @@ venv/
 ENV/
 env/
 .poetry/
+.coverage
+htmlcov/
+*.cover
 
 # Node
 node_modules/
@@ -45,3 +48,15 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# Testing
+e2e-test.js
+test-*.png
+*-screenshot.png
+
+# MCP Configuration
+.mcp.json
+
+# Root level Node files (E2E testing setup)
+/package.json
+/package-lock.json

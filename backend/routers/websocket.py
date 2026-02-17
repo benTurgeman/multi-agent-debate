@@ -139,11 +139,31 @@ def setup_websocket_broadcasting(debate_manager: DebateManager) -> None:
         Args:
             event: Debate event
         """
+        # Convert payload to JSON-serializable format
+        # This handles Pydantic models, datetime objects, and nested structures
+        from datetime import datetime as dt
+        from pydantic import BaseModel
+
+        def serialize_payload(obj):
+            """Recursively serialize payload to JSON-compatible types."""
+            if isinstance(obj, BaseModel):
+                return obj.model_dump(mode='json')
+            elif isinstance(obj, dt):
+                return obj.isoformat()
+            elif isinstance(obj, dict):
+                return {k: serialize_payload(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [serialize_payload(item) for item in obj]
+            else:
+                return obj
+
+        serialized_payload = serialize_payload(event.payload)
+
         # Create WebSocket message
         message = {
             "type": event.event_type.value,
             "debate_id": event.debate_id,
-            "payload": event.payload,
+            "payload": serialized_payload,
             "timestamp": event.timestamp.isoformat(),
         }
 
@@ -152,8 +172,10 @@ def setup_websocket_broadcasting(debate_manager: DebateManager) -> None:
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
-                asyncio.create_task(
-                    connection_manager.broadcast(event.debate_id, message)
+                # Use ensure_future to schedule the coroutine in the current loop
+                asyncio.ensure_future(
+                    connection_manager.broadcast(event.debate_id, message),
+                    loop=loop
                 )
             else:
                 loop.run_until_complete(
