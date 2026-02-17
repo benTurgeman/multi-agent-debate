@@ -21,6 +21,9 @@ export { DebateStatus, type DebateConfig, type DebateState } from './debate';
 // Provider catalog types
 export { type ModelInfo, type ProviderInfo, type ProviderCatalogResponse } from './provider';
 
+// Persona types
+export { PersonaStyle, type PersonaTemplate, type PersonaCatalogResponse } from './persona';
+
 // WebSocket types
 export {
   WebSocketEventType,

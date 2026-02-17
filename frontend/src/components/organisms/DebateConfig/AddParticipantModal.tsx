@@ -4,6 +4,8 @@ import { X } from 'lucide-react';
 import { Button, Input, Select, LoadingSpinner } from '../../atoms';
 import { providersApi } from '../../../api';
 import { AgentConfig, AgentRole, ModelProvider, ProviderInfo } from '../../../types';
+import { PersonaSelector } from './PersonaSelector';
+import { PersonaTemplate } from '../../../types/persona';
 
 export interface AddParticipantModalProps {
   /**
@@ -31,6 +33,7 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState<string>('');
   const [selectedModel, setSelectedModel] = useState<string>('');
+  const [selectedPersona, setSelectedPersona] = useState<PersonaTemplate | null>(null);
   const [agentName, setAgentName] = useState('');
   const [stance, setStance] = useState('Pro');
   const [systemPrompt, setSystemPrompt] = useState('');
@@ -64,6 +67,28 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
     }
   }, [isOpen]);
 
+  const handlePersonaChange = (persona: PersonaTemplate | null) => {
+    setSelectedPersona(persona);
+
+    if (persona) {
+      // Auto-populate form fields from persona template
+      setAgentName(persona.name);
+      setSystemPrompt(persona.system_prompt_template.replace('{stance}', stance));
+      setTemperature(persona.suggested_temperature);
+      setMaxTokens(persona.suggested_max_tokens);
+    } else {
+      // Reset to default when persona is cleared
+      // Don't clear agentName or stance as user may have customized them
+    }
+  };
+
+  // Update system prompt when stance changes and persona is selected
+  useEffect(() => {
+    if (selectedPersona && systemPrompt.includes('{stance}')) {
+      setSystemPrompt(selectedPersona.system_prompt_template.replace('{stance}', stance));
+    }
+  }, [stance, selectedPersona]);
+
   const handleSubmit = () => {
     if (!agentName.trim() || !selectedProvider || !selectedModel) {
       return;
@@ -92,6 +117,7 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
     onSubmit(agentConfig);
 
     // Reset form
+    setSelectedPersona(null);
     setAgentName('');
     setStance('Pro');
     setSystemPrompt('');
@@ -136,6 +162,13 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
               </div>
             ) : (
               <div className="flex flex-col gap-4">
+                {/* Persona Selector */}
+                <PersonaSelector
+                  value={selectedPersona?.persona_id || null}
+                  onChange={handlePersonaChange}
+                  stance={stance}
+                />
+
                 {/* Agent Name */}
                 <Input
                   label="Agent Name"
