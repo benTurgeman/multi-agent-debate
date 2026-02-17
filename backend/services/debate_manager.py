@@ -371,7 +371,7 @@ class DebateManager:
                 DebateEvent(
                     event_type=DebateEventType.JUDGE_RESULT,
                     debate_id=debate_state.debate_id,
-                    payload={"judge_result": judge_result.model_dump(mode='json')},
+                    payload={"result": judge_result.model_dump(mode='json')},
                 )
             )
 
