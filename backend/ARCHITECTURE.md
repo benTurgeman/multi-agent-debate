@@ -4,7 +4,7 @@ This document provides a comprehensive overview of the multi-agent debate system
 
 ## System Overview
 
-The multi-agent debate system is a FastAPI-based backend that orchestrates structured discussions between multiple AI agents. The system supports mixing different LLM providers (Claude, GPT-4) and delivers real-time updates via WebSockets.
+The multi-agent debate system is a FastAPI-based backend that orchestrates structured discussions between multiple AI agents. The system uses **LiteLLM** as a unified gateway, supporting cloud providers (Claude, GPT-4) and local models (Ollama/Llama 2, Mistral) with seamless mixing. Real-time updates are delivered via WebSockets.
 
 **High-Level Flow:**
 ```
@@ -110,12 +110,22 @@ Pydantic models provide data validation, serialization, and API contracts:
 Business logic and core functionality:
 
 #### LLM Clients (`services/llm/`)
-Abstraction over multiple LLM providers:
+Unified abstraction over multiple LLM providers using **LiteLLM**:
 
 - **`base.py`**: `BaseLLMClient` abstract interface
-- **`anthropic_client.py`**: Claude models (claude-3-5-sonnet, etc.)
-- **`openai_client.py`**: GPT models (gpt-4o, gpt-4-turbo, etc.)
+- **`litellm_client.py`**: Unified client for all providers via LiteLLM
 - **`factory.py`**: `create_llm_client(config)` factory function
+
+**Unified Client Architecture:**
+The system uses [LiteLLM](https://docs.litellm.ai/) as a gateway to access all LLM providers through a single, consistent interface. This eliminates the need for provider-specific client code.
+
+**Provider Format:** `"provider/model_name"` (e.g., `"anthropic/claude-sonnet-4-5-20250929"`)
+
+**Supported Providers:**
+- **Anthropic**: Claude models (`anthropic/claude-sonnet-4-5-20250929`)
+- **OpenAI**: GPT models (`openai/gpt-4o`)
+- **Ollama**: Local models (`ollama/llama2`, `ollama/mistral`) - runs locally, no API key required
+- **Extensible**: Any provider supported by LiteLLM can be added without code changes
 
 **Interface:**
 ```python
@@ -127,7 +137,16 @@ async def send_message(
 ) -> str
 ```
 
-All providers implement the same interface, enabling agent-level model mixing.
+**Adding New Providers:**
+To add a new LLM provider (e.g., Google Gemini, Cohere):
+1. Add model entry to `provider_catalog.py`
+2. Update frontend model selector (no backend code changes needed)
+
+This architecture enables:
+- ✅ Agent-level model mixing (mix cloud and local models in same debate)
+- ✅ Zero-code provider addition
+- ✅ Consistent error handling across all providers
+- ✅ Local model support for privacy and cost savings
 
 #### Prompt Builder (`prompt_builder.py`)
 Context formatting and instruction generation:
