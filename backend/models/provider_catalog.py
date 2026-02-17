@@ -1,6 +1,6 @@
 """Provider catalog models for listing available LLM providers and models."""
 
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -21,7 +21,7 @@ class ModelInfo(BaseModel):
         default=False, description="Whether this is a recommended model"
     )
     pricing_tier: str = Field(
-        ..., description="Pricing tier (e.g., 'standard', 'premium')"
+        ..., description="Pricing tier (e.g., 'standard', 'premium', 'free')"
     )
 
 
@@ -31,8 +31,8 @@ class ProviderInfo(BaseModel):
     provider_id: ModelProvider = Field(..., description="Provider identifier")
     display_name: str = Field(..., description="Provider display name")
     description: str = Field(..., description="Provider description")
-    api_key_env_var: str = Field(
-        ..., description="Default environment variable for API key"
+    api_key_env_var: Optional[str] = Field(
+        None, description="Default environment variable for API key (None for local providers)"
     )
     documentation_url: str = Field(..., description="Link to provider documentation")
     models: List[ModelInfo] = Field(
