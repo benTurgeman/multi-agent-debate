@@ -2,68 +2,7 @@
 
 ## Remaining Issues from E2E Testing (2026-02-17)
 
-### Issue #2: Round Display Off-by-One Error
-**Priority**: Medium
-**Status**: Not Started
-**Location**: Frontend - likely in debate state management or UI components
-
-**Problem**:
-- UI displays incorrect round numbers (e.g., "Round 3 of 2" or "Round 4 of 3")
-- Backend logs show correct round numbers (1, 2, 3)
-- Suggests frontend is adding 1 to the round number somewhere
-
-**Evidence**:
-- WebSocket logs show: "Round started: 1", "Round started: 2"
-- UI shows: "Round 2 of 3", "Round 3 of 3", "Round 4 of 3"
-
-**Investigation Steps**:
-1. Check `src/hooks/useDebateWebSocket.ts` - how it processes `round_started` events
-2. Check debate state reducer/context - how it stores current round
-3. Check UI components that display round numbers
-4. Look for any `currentRound + 1` or similar logic
-
-**Files to Check**:
-- `frontend/src/hooks/useDebateWebSocket.ts`
-- `frontend/src/components/organisms/DebateView/` (or similar)
-- Any state management files handling debate rounds
-
----
-
-### Issue #3: Missing WebSocket Event Handlers
-**Priority**: Low
-**Status**: Not Started
-**Location**: `frontend/src/hooks/useDebateWebSocket.ts`
-
-**Problem**:
-Frontend doesn't handle these WebSocket message types, logging "Unknown message type":
-- `turn_complete`
-- `round_complete`
-- `judging_started`
-
-**Impact**:
-- Events are received but not processed
-- No UI feedback for these transitions
-- Users don't see visual indicators for turn/round completion or judging start
-
-**Evidence**:
-Console logs show:
-```
-[LOG] [useDebateWebSocket] Unknown message type: turn_complete
-[LOG] [useDebateWebSocket] Unknown message type: round_complete
-[LOG] [useDebateWebSocket] Unknown message type: judging_started
-```
-
-**Implementation Plan**:
-1. Add handlers in `useDebateWebSocket.ts` for these event types
-2. Update debate state to reflect these transitions
-3. Add UI feedback (optional):
-   - Show "Turn completed" indicator
-   - Show "Round completed" summary
-   - Show "Judge is evaluating..." during judging
-
-**Files to Modify**:
-- `frontend/src/hooks/useDebateWebSocket.ts`
-- Possibly UI components if visual feedback is desired
+_All issues have been resolved! See completed issues below._
 
 ---
 
@@ -83,6 +22,39 @@ Console logs show:
 **Status**: Fixed in commit b802e93
 - Fixed string splitting for model IDs containing colons (e.g., `ollama:mistral:7b`)
 - Changed from `.split(':')` to `.indexOf()` and `.substring()` approach
+
+### Issue #2: Round Display Off-by-One Error ✅
+**Status**: Fixed in commit 4426a83
+**Priority**: Medium
+**Location**: `frontend/src/components/organisms/LiveDebate/index.tsx`
+
+**Problem**:
+- UI displayed incorrect round numbers (e.g., "Round 3 of 2" or "Round 4 of 3")
+- Backend sends 1-indexed round numbers (1, 2, 3)
+- Frontend incorrectly assumed 0-indexed and added +1
+
+**Solution**:
+- Removed the `+ 1` adjustment in LiveDebate component (line 64)
+- Updated comment to reflect that backend sends 1-indexed round numbers
+- Verified backend uses `range(1, num_rounds + 1)` in debate_manager.py
+
+### Issue #3: Missing WebSocket Event Handlers ✅
+**Status**: Fixed in commit 4426a83
+**Priority**: Low
+**Location**: `frontend/src/hooks/useDebateWebSocket.ts`
+
+**Problem**:
+Frontend didn't handle these WebSocket message types, logging "Unknown message type":
+- `turn_complete`
+- `round_complete`
+- `judging_started`
+
+**Solution**:
+- Added handler for `TURN_COMPLETE` event - logs turn completion (informational)
+- Added handler for `ROUND_COMPLETE` event - logs round completion (informational)
+- Added handler for `JUDGING_STARTED` event - logs judging start (can be extended for UI feedback)
+- Imported missing event type definitions from types/websocket
+- All handlers properly typed and verified with TypeScript compilation
 
 ---
 
