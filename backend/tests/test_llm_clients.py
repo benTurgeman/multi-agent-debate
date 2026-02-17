@@ -198,19 +198,21 @@ class TestOpenAIClient:
 
 
 class TestLLMFactory:
-    """Tests for LLM client factory."""
+    """Tests for LLM client factory (now using LiteLLM)."""
 
     @patch("services.llm.factory.get_settings")
     def test_create_anthropic_client(self, mock_get_settings):
-        """Test creating Anthropic client via factory."""
+        """Test creating LiteLLM client for Anthropic via factory."""
+        from services.llm.litellm_client import LiteLLMClient
+
         # Mock settings
         mock_settings = MagicMock()
-        mock_settings.get_api_key.return_value = "test-anthropic-key"
+        mock_settings.get_api_key_optional.return_value = "test-anthropic-key"
         mock_get_settings.return_value = mock_settings
 
         # Create config
         config = LLMConfig(
-            provider=ModelProvider.ANTHROPIC,
+            provider="anthropic",
             model_name="claude-3-5-sonnet-20241022",
             api_key_env_var="ANTHROPIC_API_KEY"
         )
@@ -218,21 +220,24 @@ class TestLLMFactory:
         # Create client
         client = create_llm_client(config)
 
-        assert isinstance(client, AnthropicClient)
+        assert isinstance(client, LiteLLMClient)
         assert client.get_provider_name() == "anthropic"
-        mock_settings.get_api_key.assert_called_once_with("ANTHROPIC_API_KEY")
+        assert client.model_name == "anthropic/claude-3-5-sonnet-20241022"
+        mock_settings.get_api_key_optional.assert_called_once_with("ANTHROPIC_API_KEY")
 
     @patch("services.llm.factory.get_settings")
     def test_create_openai_client(self, mock_get_settings):
-        """Test creating OpenAI client via factory."""
+        """Test creating LiteLLM client for OpenAI via factory."""
+        from services.llm.litellm_client import LiteLLMClient
+
         # Mock settings
         mock_settings = MagicMock()
-        mock_settings.get_api_key.return_value = "test-openai-key"
+        mock_settings.get_api_key_optional.return_value = "test-openai-key"
         mock_get_settings.return_value = mock_settings
 
         # Create config
         config = LLMConfig(
-            provider=ModelProvider.OPENAI,
+            provider="openai",
             model_name="gpt-4o",
             api_key_env_var="OPENAI_API_KEY"
         )
@@ -240,25 +245,29 @@ class TestLLMFactory:
         # Create client
         client = create_llm_client(config)
 
-        assert isinstance(client, OpenAIClient)
+        assert isinstance(client, LiteLLMClient)
         assert client.get_provider_name() == "openai"
-        mock_settings.get_api_key.assert_called_once_with("OPENAI_API_KEY")
+        assert client.model_name == "openai/gpt-4o"
+        mock_settings.get_api_key_optional.assert_called_once_with("OPENAI_API_KEY")
 
     @patch("services.llm.factory.get_settings")
     def test_create_client_missing_api_key(self, mock_get_settings):
-        """Test error handling when API key is missing."""
-        # Mock settings to raise error
+        """Test that missing API key doesn't raise error (works for local models)."""
+        from services.llm.litellm_client import LiteLLMClient
+
+        # Mock settings to return None for missing API key
         mock_settings = MagicMock()
-        mock_settings.get_api_key.side_effect = ConfigurationError("API key not found")
+        mock_settings.get_api_key_optional.return_value = None
         mock_get_settings.return_value = mock_settings
 
-        # Create config
+        # Create config for Ollama (no API key needed)
         config = LLMConfig(
-            provider=ModelProvider.ANTHROPIC,
-            model_name="claude-3-5-sonnet-20241022",
+            provider="ollama",
+            model_name="llama2",
             api_key_env_var="MISSING_KEY"
         )
 
-        # Should raise ConfigurationError
-        with pytest.raises(ConfigurationError, match="API key not found"):
-            create_llm_client(config)
+        # Should NOT raise error - local models don't need API keys
+        client = create_llm_client(config)
+        assert isinstance(client, LiteLLMClient)
+        assert client.api_key is None

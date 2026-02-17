@@ -60,8 +60,8 @@ export const LiveDebate: React.FC<LiveDebateProps> = ({ className }) => {
     debate.config.agents
   );
 
-  // Calculate display round number (backend is 0-indexed)
-  const displayRound = debate.current_round + 1;
+  // Backend sends 1-indexed round numbers, use them directly
+  const displayRound = debate.current_round;
   const totalRounds = debate.config.num_rounds;
 
   return (

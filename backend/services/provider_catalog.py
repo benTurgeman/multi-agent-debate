@@ -116,6 +116,33 @@ PROVIDER_CATALOG: List[ProviderInfo] = [
             ),
         ],
     ),
+    ProviderInfo(
+        provider_id=ModelProvider.OLLAMA,
+        display_name="Ollama",
+        description="Local LLM models via Ollama",
+        api_key_env_var=None,  # No API key required for local models
+        documentation_url="https://ollama.ai/",
+        models=[
+            ModelInfo(
+                model_id="mistral:7b",
+                display_name="Mistral 7B",
+                description="Mistral 7B model - efficient and capable",
+                context_window=8192,
+                max_output_tokens=4096,
+                recommended=True,
+                pricing_tier="free",
+            ),
+            ModelInfo(
+                model_id="llama3.2:3b",
+                display_name="Llama 3.2 3B",
+                description="Meta's Llama 3.2 3B model - compact and fast",
+                context_window=128000,
+                max_output_tokens=2048,
+                recommended=False,
+                pricing_tier="free",
+            ),
+        ],
+    ),
 ]
 
 

@@ -12,6 +12,9 @@ import {
   RoundStartedEvent,
   AgentThinkingEvent,
   MessageReceivedEvent,
+  TurnCompleteEvent,
+  RoundCompleteEvent,
+  JudgingStartedEvent,
   JudgeResultEvent,
   DebateCompleteEvent,
   DebateErrorEvent,
@@ -175,6 +178,27 @@ export function useDebateWebSocket(
             addMessage(payload.message);
             // Remove thinking indicator for this agent
             removeThinkingAgent(payload.message.agent_id);
+            break;
+          }
+
+          case WebSocketEventType.TURN_COMPLETE: {
+            const payload = message.payload as TurnCompleteEvent;
+            log('Turn complete:', `Round ${payload.round_number}, Turn ${payload.turn_number}`);
+            // Turn completion is informational - state already updated by MESSAGE_RECEIVED
+            break;
+          }
+
+          case WebSocketEventType.ROUND_COMPLETE: {
+            const payload = message.payload as RoundCompleteEvent;
+            log('Round complete:', payload.round_number);
+            // Round completion is informational - next ROUND_STARTED will update state
+            break;
+          }
+
+          case WebSocketEventType.JUDGING_STARTED: {
+            const payload = message.payload as JudgingStartedEvent;
+            log('Judging started for debate:', payload.debate_id);
+            // Could add a "judging" status or loading indicator here if desired
             break;
           }
 

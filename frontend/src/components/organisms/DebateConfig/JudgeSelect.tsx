@@ -41,7 +41,12 @@ export const JudgeSelect: React.FC<JudgeSelectProps> = ({ value, onChange }) => 
     if (!selectedValue) return;
 
     // Parse the selected value (format: "provider:model_id")
-    const [providerStr, modelId] = selectedValue.split(':');
+    // Note: model_id may contain colons (e.g., "mistral:7b"), so only split on first colon
+    const colonIndex = selectedValue.indexOf(':');
+    if (colonIndex === -1) return;
+
+    const providerStr = selectedValue.substring(0, colonIndex);
+    const modelId = selectedValue.substring(colonIndex + 1);
     const provider = providers.find((p) => p.provider_id === providerStr);
     const model = provider?.models.find((m) => m.model_id === modelId);
 

@@ -5,7 +5,8 @@ Multi-agent AI debate system backend built with FastAPI.
 ## Features
 
 - 🤖 **Multi-Agent Debates**: Support for 2+ agents with different perspectives
-- 🔄 **Multiple LLM Providers**: Mix Claude and OpenAI models in the same debate
+- 🔄 **Multiple LLM Providers**: Mix Claude, OpenAI, and local models (Ollama) in the same debate
+- 🏠 **Local Model Support**: Run debates with Ollama (Llama 2, Mistral) - no API keys required
 - 🎯 **Turn-Based Discussion**: Sequential rounds with full conversation history
 - ⚖️ **AI Judge**: Automated evaluation with 0-10 scoring and winner selection
 - 🔁 **Automatic Retries**: Resilient to temporary API failures (up to 3 retries per turn)
@@ -28,7 +29,110 @@ Create a `.env` file in the backend directory with your API keys:
 # Required API keys (add only the ones you plan to use)
 ANTHROPIC_API_KEY=sk-ant-api03-...
 OPENAI_API_KEY=sk-...
+
+# Note: Ollama (local models) does not require an API key
 ```
+
+## Using Local Models (Ollama)
+
+Run debates locally without cloud API costs using Ollama:
+
+### 1. Install Ollama
+
+```bash
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Windows
+# Download from https://ollama.ai/download
+```
+
+### 2. Start Ollama Server
+
+```bash
+ollama serve
+```
+
+### 3. Pull Models
+
+```bash
+# Llama 2 7B (recommended for testing)
+ollama pull llama2
+
+# Llama 2 13B (better reasoning, slower)
+ollama pull llama2:13b
+
+# Mistral 7B (efficient and capable)
+ollama pull mistral
+```
+
+### 4. Configure Agent with Ollama
+
+```python
+from models.agent import AgentConfig, AgentRole
+from models.llm import LLMConfig
+
+agent = AgentConfig(
+    agent_id="local_agent",
+    llm_config=LLMConfig(
+        provider="ollama",
+        model_name="llama2",
+        api_base="http://localhost:11434"  # Default Ollama URL
+        # No api_key_env_var needed for local models!
+    ),
+    role=AgentRole.DEBATER,
+    name="Local AI",
+    stance="Pro",
+    system_prompt="You are a debater.",
+    temperature=0.8,
+    max_tokens=512
+)
+```
+
+### 5. Mix Cloud and Local Models
+
+```python
+# Claude (cloud) vs Llama 2 (local)
+agents = [
+    AgentConfig(
+        agent_id="claude",
+        llm_config=LLMConfig(
+            provider="anthropic",
+            model_name="claude-sonnet-4-5-20250929",
+            api_key_env_var="ANTHROPIC_API_KEY"
+        ),
+        # ... rest of config
+    ),
+    AgentConfig(
+        agent_id="llama",
+        llm_config=LLMConfig(
+            provider="ollama",
+            model_name="llama2",
+            api_base="http://localhost:11434"
+        ),
+        # ... rest of config
+    )
+]
+```
+
+**Supported Ollama Models:**
+- `llama2` - Llama 2 7B (good for general tasks)
+- `llama2:13b` - Llama 2 13B (better reasoning)
+- `mistral` - Mistral 7B (efficient and capable)
+
+**Benefits:**
+- ✅ No API costs
+- ✅ Full privacy (runs locally)
+- ✅ No rate limits
+- ✅ Offline capability
+
+**Trade-offs:**
+- ⚠️ Slower than cloud APIs
+- ⚠️ Requires local compute resources
+- ⚠️ Lower quality than GPT-4/Claude for complex tasks
 
 ## Run
 
@@ -221,7 +325,10 @@ response = await client.send_message(
 )
 ```
 
-**Supported Providers:** Anthropic (Claude models), OpenAI (GPT-4 models)
+**Supported Providers:**
+- **Anthropic** - Claude models (Opus, Sonnet, Haiku)
+- **OpenAI** - GPT models (GPT-4o, GPT-4 Turbo)
+- **Ollama** - Local models (Llama 2, Mistral) - no API key required
 
 ### Custom Prompt Building
 
