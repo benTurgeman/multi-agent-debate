@@ -264,12 +264,8 @@ class TestJudgeModels:
     def test_get_score_for_agent(self):
         """Test getting score for specific agent."""
         scores = [
-            AgentScore(
-                agent_id="agent1", agent_name="A", score=8.5, reasoning="Good"
-            ),
-            AgentScore(
-                agent_id="agent2", agent_name="B", score=7.0, reasoning="OK"
-            ),
+            AgentScore(agent_id="agent1", agent_name="A", score=8.5, reasoning="Good"),
+            AgentScore(agent_id="agent2", agent_name="B", score=7.0, reasoning="OK"),
         ]
         result = JudgeResult(
             summary="Test",
@@ -397,7 +393,9 @@ class TestDebateConfig:
             )
         # Check that validation error is about agents list length
         assert "agents" in str(exc_info.value).lower()
-        assert "at least 2" in str(exc_info.value).lower() or "too_short" in str(exc_info.value)
+        assert "at least 2" in str(exc_info.value).lower() or "too_short" in str(
+            exc_info.value
+        )
 
     def test_unique_agent_ids_validation(self):
         """Test that agent IDs must be unique."""

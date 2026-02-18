@@ -25,7 +25,7 @@ import {
 interface WebSocketMessage {
   type: string;
   debate_id: string;
-  payload: any;
+  payload: unknown;
   timestamp: string;
 }
 
@@ -65,7 +65,6 @@ export function useDebateWebSocket(
 
   // Store actions
   const {
-    setDebate,
     updateDebateStatus,
     setCurrentRound,
     setCurrentTurn,
@@ -89,7 +88,7 @@ export function useDebateWebSocket(
    * Log debug messages if debug mode is enabled
    */
   const log = useCallback(
-    (...args: any[]) => {
+    (...args: unknown[]) => {
       if (debug) {
         console.log('[useDebateWebSocket]', ...args);
       }
@@ -276,6 +275,7 @@ export function useDebateWebSocket(
         );
       }
     }, reconnectDelayRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [log, setConnectionState]);
 
   /**

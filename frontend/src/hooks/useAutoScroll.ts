@@ -3,7 +3,7 @@
  * Automatically scrolls to bottom when dependencies change (e.g., new messages)
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, type DependencyList } from 'react';
 
 interface UseAutoScrollOptions {
   /** Enable or disable auto-scroll */
@@ -26,7 +26,7 @@ interface UseAutoScrollOptions {
  * return <div ref={containerRef}>...</div>;
  */
 export function useAutoScroll<T extends HTMLElement = HTMLDivElement>(
-  dependencies: any[],
+  dependencies: DependencyList,
   options: UseAutoScrollOptions = {}
 ): React.RefObject<T> {
   const {
@@ -42,7 +42,7 @@ export function useAutoScroll<T extends HTMLElement = HTMLDivElement>(
   /**
    * Check if user has scrolled away from bottom
    */
-  const checkScrollPosition = () => {
+  const checkScrollPosition = useCallback(() => {
     if (!containerRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -50,7 +50,7 @@ export function useAutoScroll<T extends HTMLElement = HTMLDivElement>(
 
     // If user scrolled more than threshold away from bottom, disable auto-scroll
     isUserScrollingRef.current = distanceFromBottom > threshold;
-  };
+  }, [threshold]);
 
   /**
    * Scroll to bottom of container
@@ -94,7 +94,7 @@ export function useAutoScroll<T extends HTMLElement = HTMLDivElement>(
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [enabled]);
+  }, [enabled, checkScrollPosition]);
 
   /**
    * Auto-scroll when dependencies change

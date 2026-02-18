@@ -87,6 +87,7 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
     if (selectedPersona && systemPrompt.includes('{stance}')) {
       setSystemPrompt(selectedPersona.system_prompt_template.replace('{stance}', stance));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stance, selectedPersona]);
 
   const handleSubmit = () => {
@@ -166,7 +167,6 @@ export const AddParticipantModal: React.FC<AddParticipantModalProps> = ({
                 <PersonaSelector
                   value={selectedPersona?.persona_id || null}
                   onChange={handlePersonaChange}
-                  stance={stance}
                 />
 
                 {/* Agent Name */}

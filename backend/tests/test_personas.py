@@ -228,7 +228,9 @@ class TestPersonasAPI:
 
         for persona in personas:
             for field in required_fields:
-                assert field in persona, f"Missing field {field} in persona {persona.get('name', 'unknown')}"
+                assert (
+                    field in persona
+                ), f"Missing field {field} in persona {persona.get('name', 'unknown')}"
 
     def test_persona_ids_are_unique(self, client):
         """Test that all persona IDs are unique."""

@@ -189,6 +189,7 @@ async def main():
     except Exception as e:
         print(f"\n❌ Error running debate: {e}")
         import traceback
+
         traceback.print_exc()
         raise
 

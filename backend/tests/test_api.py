@@ -100,7 +100,9 @@ class TestDebateEndpoints:
         assert response.status_code == 200
         assert response.json()["status"] == "ok"
 
-    def test_create_debate(self, client: TestClient, sample_debate_config: DebateConfig):
+    def test_create_debate(
+        self, client: TestClient, sample_debate_config: DebateConfig
+    ):
         """Test creating a new debate."""
         response = client.post(
             "/api/debates",
@@ -217,9 +219,7 @@ class TestDebateEndpoints:
         assert data["total_rounds"] == 2
         assert data["message_count"] == 0
 
-    def test_start_debate(
-        self, client: TestClient, sample_debate_config: DebateConfig
-    ):
+    def test_start_debate(self, client: TestClient, sample_debate_config: DebateConfig):
         """Test starting a debate."""
         # Create debate
         create_response = client.post(
@@ -254,6 +254,7 @@ class TestDebateEndpoints:
 
         # Give it a moment to start
         import time
+
         time.sleep(0.1)
 
         # Try to start again

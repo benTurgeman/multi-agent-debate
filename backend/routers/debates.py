@@ -424,7 +424,9 @@ def _export_markdown(debate) -> str:
     lines.append("")
     for agent in debate.config.agents:
         lines.append(f"- **{agent.name}** ({agent.stance})")
-        lines.append(f"  - Model: {agent.llm_config.provider}/{agent.llm_config.model_name}")
+        lines.append(
+            f"  - Model: {agent.llm_config.provider}/{agent.llm_config.model_name}"
+        )
         lines.append(f"  - Role: {agent.role.value}")
     lines.append("")
 
@@ -498,7 +500,9 @@ def _export_text(debate) -> str:
     lines.append("-" * 80)
     for agent in debate.config.agents:
         lines.append(f"{agent.name} ({agent.stance})")
-        lines.append(f"  Model: {agent.llm_config.provider}/{agent.llm_config.model_name}")
+        lines.append(
+            f"  Model: {agent.llm_config.provider}/{agent.llm_config.model_name}"
+        )
         lines.append(f"  Role: {agent.role.value}")
     lines.append("")
 

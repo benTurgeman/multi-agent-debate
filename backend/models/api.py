@@ -76,9 +76,7 @@ class WebSocketMessage(BaseModel):
     """WebSocket message format."""
 
     type: str = Field(..., description="Message type")
-    payload: Dict[str, Any] = Field(
-        default_factory=dict, description="Message payload"
-    )
+    payload: Dict[str, Any] = Field(default_factory=dict, description="Message payload")
     timestamp: str = Field(..., description="Message timestamp (ISO format)")
 
 

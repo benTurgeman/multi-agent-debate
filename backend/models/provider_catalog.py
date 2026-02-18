@@ -32,7 +32,8 @@ class ProviderInfo(BaseModel):
     display_name: str = Field(..., description="Provider display name")
     description: str = Field(..., description="Provider description")
     api_key_env_var: Optional[str] = Field(
-        None, description="Default environment variable for API key (None for local providers)"
+        None,
+        description="Default environment variable for API key (None for local providers)",
     )
     documentation_url: str = Field(..., description="Link to provider documentation")
     models: List[ModelInfo] = Field(

@@ -29,9 +29,7 @@ class MemoryDebateStore:
         """
         async with self._lock:
             if debate.debate_id in self._debates:
-                raise StorageError(
-                    f"Debate with ID {debate.debate_id} already exists"
-                )
+                raise StorageError(f"Debate with ID {debate.debate_id} already exists")
             self._debates[debate.debate_id] = debate
             return debate
 

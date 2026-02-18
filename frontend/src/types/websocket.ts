@@ -9,7 +9,7 @@ import { Message } from './message';
 // Base WebSocket message structure
 export interface WebSocketMessage {
   type: string;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   timestamp: string; // ISO format
 }
 

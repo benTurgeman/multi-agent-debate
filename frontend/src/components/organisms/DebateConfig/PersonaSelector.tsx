@@ -13,11 +13,6 @@ export interface PersonaSelectorProps {
    * Change handler - receives full persona object or null for custom
    */
   onChange: (persona: PersonaTemplate | null) => void;
-
-  /**
-   * Current stance for prompt preview
-   */
-  stance: string;
 }
 
 /**
@@ -41,7 +36,6 @@ const getStyleBadgeColor = (style: PersonaStyle): 'pro' | 'con' | 'judge' | 'neu
 export const PersonaSelector: React.FC<PersonaSelectorProps> = ({
   value,
   onChange,
-  stance,
 }) => {
   const [personas, setPersonas] = useState<PersonaTemplate[]>([]);
   const [loading, setLoading] = useState(true);

@@ -153,7 +153,9 @@ class TestGetNextAgent:
         debate_state_3_agents.current_turn = 3
         assert orchestrator.get_next_agent(debate_state_3_agents).agent_id == "agent_1"
 
-    def test_get_next_agent_no_agents_validation(self, orchestrator, sample_judge_config):
+    def test_get_next_agent_no_agents_validation(
+        self, orchestrator, sample_judge_config
+    ):
         """Test that config validation prevents creating debate with no agents."""
         from pydantic import ValidationError
 
