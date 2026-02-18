@@ -100,9 +100,7 @@ class DebateManager:
         Args:
             event: Event to emit
         """
-        logger.debug(
-            f"Emitting event: {event.event_type} for debate {event.debate_id}"
-        )
+        logger.debug(f"Emitting event: {event.event_type} for debate {event.debate_id}")
         for callback in self._event_callbacks:
             try:
                 callback(event)
@@ -206,9 +204,7 @@ class DebateManager:
                 exc_info=True,
             )
 
-            raise DebateExecutionError(
-                f"Debate execution failed: {e}"
-            ) from e
+            raise DebateExecutionError(f"Debate execution failed: {e}") from e
 
     async def _execute_round(
         self,
@@ -277,7 +273,7 @@ class DebateManager:
                     event_type=DebateEventType.MESSAGE_RECEIVED,
                     debate_id=debate_state.debate_id,
                     payload={
-                        "message": message.model_dump(mode='json'),
+                        "message": message.model_dump(mode="json"),
                     },
                 )
             )
@@ -296,7 +292,10 @@ class DebateManager:
             )
 
             # Rate limiting: sleep between turns (except after last turn)
-            if turn_index < len(turn_order) - 1 or round_num < debate_state.config.num_rounds:
+            if (
+                turn_index < len(turn_order) - 1
+                or round_num < debate_state.config.num_rounds
+            ):
                 await asyncio.sleep(self.rate_limit_delay)
 
         # Emit round complete event
@@ -371,7 +370,7 @@ class DebateManager:
                 DebateEvent(
                     event_type=DebateEventType.JUDGE_RESULT,
                     debate_id=debate_state.debate_id,
-                    payload={"result": judge_result.model_dump(mode='json')},
+                    payload={"result": judge_result.model_dump(mode="json")},
                 )
             )
 
@@ -387,9 +386,7 @@ class DebateManager:
             logger.error(error_msg, exc_info=True)
             raise DebateExecutionError(error_msg) from e
 
-    def _parse_judge_response(
-        self, response_text: str, agents: list
-    ) -> JudgeResult:
+    def _parse_judge_response(self, response_text: str, agents: list) -> JudgeResult:
         """
         Parse the judge's response into a JudgeResult.
 

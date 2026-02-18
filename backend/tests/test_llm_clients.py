@@ -18,8 +18,7 @@ class TestAnthropicClient:
     def anthropic_client(self):
         """Create an Anthropic client for testing."""
         return AnthropicClient(
-            api_key="test-api-key",
-            model_name="claude-3-5-sonnet-20241022"
+            api_key="test-api-key", model_name="claude-3-5-sonnet-20241022"
         )
 
     @pytest.mark.asyncio
@@ -81,9 +80,7 @@ class TestAnthropicClient:
         """Test handling of rate limit errors."""
         anthropic_client.client.messages.create = AsyncMock(
             side_effect=anthropic.RateLimitError(
-                response=MagicMock(),
-                body=None,
-                message="Rate limit exceeded"
+                response=MagicMock(), body=None, message="Rate limit exceeded"
             )
         )
 
@@ -106,10 +103,7 @@ class TestOpenAIClient:
     @pytest.fixture
     def openai_client(self):
         """Create an OpenAI client for testing."""
-        return OpenAIClient(
-            api_key="test-api-key",
-            model_name="gpt-4o"
-        )
+        return OpenAIClient(api_key="test-api-key", model_name="gpt-4o")
 
     @pytest.mark.asyncio
     async def test_send_message_success(self, openai_client):
@@ -122,7 +116,9 @@ class TestOpenAIClient:
         mock_response.usage = MagicMock(prompt_tokens=10, completion_tokens=20)
 
         # Mock the client's chat.completions.create method
-        openai_client.client.chat.completions.create = AsyncMock(return_value=mock_response)
+        openai_client.client.chat.completions.create = AsyncMock(
+            return_value=mock_response
+        )
 
         # Test the send_message method
         result = await openai_client.send_message(
@@ -148,7 +144,9 @@ class TestOpenAIClient:
         mock_response = MagicMock()
         mock_response.choices = []
 
-        openai_client.client.chat.completions.create = AsyncMock(return_value=mock_response)
+        openai_client.client.chat.completions.create = AsyncMock(
+            return_value=mock_response
+        )
 
         with pytest.raises(ValueError, match="Empty response from OpenAI API"):
             await openai_client.send_message(
@@ -178,9 +176,7 @@ class TestOpenAIClient:
         """Test handling of rate limit errors."""
         openai_client.client.chat.completions.create = AsyncMock(
             side_effect=openai.RateLimitError(
-                response=MagicMock(),
-                body=None,
-                message="Rate limit exceeded"
+                response=MagicMock(), body=None, message="Rate limit exceeded"
             )
         )
 
@@ -214,7 +210,7 @@ class TestLLMFactory:
         config = LLMConfig(
             provider="anthropic",
             model_name="claude-3-5-sonnet-20241022",
-            api_key_env_var="ANTHROPIC_API_KEY"
+            api_key_env_var="ANTHROPIC_API_KEY",
         )
 
         # Create client
@@ -237,9 +233,7 @@ class TestLLMFactory:
 
         # Create config
         config = LLMConfig(
-            provider="openai",
-            model_name="gpt-4o",
-            api_key_env_var="OPENAI_API_KEY"
+            provider="openai", model_name="gpt-4o", api_key_env_var="OPENAI_API_KEY"
         )
 
         # Create client
@@ -262,9 +256,7 @@ class TestLLMFactory:
 
         # Create config for Ollama (no API key needed)
         config = LLMConfig(
-            provider="ollama",
-            model_name="llama2",
-            api_key_env_var="MISSING_KEY"
+            provider="ollama", model_name="llama2", api_key_env_var="MISSING_KEY"
         )
 
         # Should NOT raise error - local models don't need API keys

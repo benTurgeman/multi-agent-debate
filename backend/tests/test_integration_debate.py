@@ -172,22 +172,26 @@ async def test_complete_3_agent_mixed_model_debate(three_agent_mixed_debate_conf
     async def mock_judge_send(*args, **kwargs):
         return judge_response
 
-    mock_anthropic.send_message = AsyncMock(side_effect=[
-        # Optimist (agent 1) responses
-        agent_responses[0],  # Round 1
-        agent_responses[3],  # Round 2
-        # Pragmatist (agent 3) responses
-        agent_responses[2],  # Round 1
-        agent_responses[5],  # Round 2
-        # Judge response
-        judge_response,
-    ])
+    mock_anthropic.send_message = AsyncMock(
+        side_effect=[
+            # Optimist (agent 1) responses
+            agent_responses[0],  # Round 1
+            agent_responses[3],  # Round 2
+            # Pragmatist (agent 3) responses
+            agent_responses[2],  # Round 1
+            agent_responses[5],  # Round 2
+            # Judge response
+            judge_response,
+        ]
+    )
 
-    mock_openai.send_message = AsyncMock(side_effect=[
-        # Skeptic (agent 2) responses
-        agent_responses[1],  # Round 1
-        agent_responses[4],  # Round 2
-    ])
+    mock_openai.send_message = AsyncMock(
+        side_effect=[
+            # Skeptic (agent 2) responses
+            agent_responses[1],  # Round 1
+            agent_responses[4],  # Round 2
+        ]
+    )
 
     # Patch the LLM factory to return our mocks
     def mock_create_llm_client(llm_config):
@@ -275,13 +279,19 @@ async def test_complete_3_agent_mixed_model_debate(three_agent_mixed_debate_conf
     assert DebateEventType.DEBATE_COMPLETE in event_types
 
     # Verify both LLM providers were used
-    assert mock_anthropic.send_message.call_count == 5  # 2x optimist + 2x pragmatist + 1x judge
+    assert (
+        mock_anthropic.send_message.call_count == 5
+    )  # 2x optimist + 2x pragmatist + 1x judge
     assert mock_openai.send_message.call_count == 2  # 2x skeptic
 
-    print("\n✅ Integration test passed: 3-agent mixed-model debate completed successfully")
+    print(
+        "\n✅ Integration test passed: 3-agent mixed-model debate completed successfully"
+    )
     print(f"   - Total messages: {len(result.history)}")
     print(f"   - Winner: {result.judge_result.winner_name}")
-    print(f"   - Scores: {[f'{s.agent_name}: {s.score}' for s in result.judge_result.agent_scores]}")
+    print(
+        f"   - Scores: {[f'{s.agent_name}: {s.score}' for s in result.judge_result.agent_scores]}"
+    )
 
 
 @pytest.mark.asyncio
@@ -317,17 +327,19 @@ async def test_debate_with_turn_retry_success(three_agent_mixed_debate_config):
             raise Exception("Temporary API error")
         return f"Response for call {call_count[0]}"
 
-    mock_client.send_message = AsyncMock(side_effect=[
-        Exception("Temporary API error"),  # First attempt fails
-        "Success after retry",  # Retry succeeds
-        "Second agent response",
-        "Third agent response",
-        "Fourth message",
-        "Fifth message",
-        "Sixth message",
-        # Judge
-        '{"summary": "Test", "agent_scores": [{"agent_id": "optimist", "agent_name": "Tech Optimist", "score": 8.0, "reasoning": "Good"}], "winner_id": "optimist", "winner_name": "Tech Optimist", "key_arguments": []}',
-    ])
+    mock_client.send_message = AsyncMock(
+        side_effect=[
+            Exception("Temporary API error"),  # First attempt fails
+            "Success after retry",  # Retry succeeds
+            "Second agent response",
+            "Third agent response",
+            "Fourth message",
+            "Fifth message",
+            "Sixth message",
+            # Judge
+            '{"summary": "Test", "agent_scores": [{"agent_id": "optimist", "agent_name": "Tech Optimist", "score": 8.0, "reasoning": "Good"}], "winner_id": "optimist", "winner_name": "Tech Optimist", "key_arguments": []}',
+        ]
+    )
 
     with patch(
         "services.agent_orchestrator.create_llm_client", return_value=mock_client

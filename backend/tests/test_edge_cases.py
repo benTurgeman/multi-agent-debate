@@ -400,9 +400,7 @@ class TestAPIFailures:
     """Test handling of API failures during debate execution."""
 
     @patch("services.llm.factory.create_llm_client")
-    def test_debate_with_llm_api_failure(
-        self, mock_create_client, client: TestClient
-    ):
+    def test_debate_with_llm_api_failure(self, mock_create_client, client: TestClient):
         """Test debate handling when LLM API fails."""
         # Mock LLM client that always fails
         mock_client = Mock()
@@ -473,6 +471,7 @@ class TestAPIFailures:
 
         # Wait a bit for background task
         import time
+
         time.sleep(2)
 
         # Check debate status - should be FAILED

@@ -163,7 +163,9 @@ async def main():
 
         elif event.event_type == DebateEventType.AGENT_THINKING:
             turn_count["count"] += 1
-            print(f"[Turn {turn_count['count']}/10] 💭 {event.payload['agent_name']} is formulating argument...")
+            print(
+                f"[Turn {turn_count['count']}/10] 💭 {event.payload['agent_name']} is formulating argument..."
+            )
 
         elif event.event_type == DebateEventType.MESSAGE_RECEIVED:
             msg = event.payload["message"]
@@ -192,20 +194,20 @@ async def main():
 
             print("📊 DETAILED SCORES:\n")
             sorted_scores = sorted(
-                result["agent_scores"],
-                key=lambda x: x["score"],
-                reverse=True
+                result["agent_scores"], key=lambda x: x["score"], reverse=True
             )
             for i, score in enumerate(sorted_scores, 1):
                 medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(i, "  ")
                 stars = "⭐" * int(score["score"])
-                print(f"{medal} #{i} - {score['agent_name']}: {score['score']}/10 {stars}")
+                print(
+                    f"{medal} #{i} - {score['agent_name']}: {score['score']}/10 {stars}"
+                )
                 print(f"      Reasoning: {score['reasoning']}\n")
 
             print(f"{'─' * 80}")
             print("📝 JUDGE'S SUMMARY:")
             print(f"{'─' * 80}")
-            print(result['summary'])
+            print(result["summary"])
 
             if result.get("key_arguments"):
                 print(f"\n{'─' * 80}")
@@ -253,6 +255,7 @@ async def main():
     except Exception as e:
         print(f"\n❌ Error running debate: {e}")
         import traceback
+
         traceback.print_exc()
         raise
 

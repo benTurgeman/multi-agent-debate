@@ -17,7 +17,7 @@ class Message(BaseModel):
     )
     timestamp: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        description="When the message was created"
+        description="When the message was created",
     )
     stance: str = Field(..., description="Agent's stance in the debate")
 
@@ -25,7 +25,9 @@ class Message(BaseModel):
 class MessageHistory(BaseModel):
     """Collection of messages in a debate."""
 
-    messages: List[Message] = Field(default_factory=list, description="List of messages")
+    messages: List[Message] = Field(
+        default_factory=list, description="List of messages"
+    )
 
     def add_message(self, message: Message) -> None:
         """

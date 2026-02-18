@@ -3,4 +3,6 @@ export type { CreateDebateResponse, StartDebateResponse, ExportFormat } from './
 
 export { providersApi } from './providers';
 
+export { personasApi } from './personas';
+
 export { API_BASE_URL, WS_BASE_URL } from './config';

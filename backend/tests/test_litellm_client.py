@@ -65,7 +65,10 @@ class TestLiteLLMClient:
             assert call_args.kwargs["api_key"] == "test-anthropic-key"
             # Verify system prompt was added
             assert call_args.kwargs["messages"][0]["role"] == "system"
-            assert call_args.kwargs["messages"][0]["content"] == "You are a helpful assistant."
+            assert (
+                call_args.kwargs["messages"][0]["content"]
+                == "You are a helpful assistant."
+            )
 
     @pytest.mark.asyncio
     async def test_send_message_openai(self, openai_client):
@@ -131,7 +134,9 @@ class TestLiteLLMClient:
         mock_response.choices = []
 
         with patch("litellm.acompletion", new=AsyncMock(return_value=mock_response)):
-            with pytest.raises(ValueError, match="Empty response from anthropic via LiteLLM"):
+            with pytest.raises(
+                ValueError, match="Empty response from anthropic via LiteLLM"
+            ):
                 await anthropic_client.send_message(
                     system_prompt="Test",
                     messages=[{"role": "user", "content": "Test"}],
@@ -144,11 +149,13 @@ class TestLiteLLMClient:
         """Test handling of authentication errors."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.AuthenticationError(
-                message="Invalid API key",
-                llm_provider="anthropic",
-                model="claude-sonnet-4-5-20250929"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.AuthenticationError(
+                    message="Invalid API key",
+                    llm_provider="anthropic",
+                    model="claude-sonnet-4-5-20250929",
+                )
+            ),
         ):
             with pytest.raises(Exception, match="Authentication failed for anthropic"):
                 await anthropic_client.send_message(
@@ -163,11 +170,11 @@ class TestLiteLLMClient:
         """Test handling of rate limit errors (should retry)."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.RateLimitError(
-                message="Rate limit exceeded",
-                llm_provider="openai",
-                model="gpt-4o"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.RateLimitError(
+                    message="Rate limit exceeded", llm_provider="openai", model="gpt-4o"
+                )
+            ),
         ):
             with pytest.raises(litellm.RateLimitError):
                 await openai_client.send_message(
@@ -182,11 +189,13 @@ class TestLiteLLMClient:
         """Test handling of context window exceeded errors."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.ContextWindowExceededError(
-                message="Context too long",
-                llm_provider="anthropic",
-                model="claude-sonnet-4-5-20250929"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.ContextWindowExceededError(
+                    message="Context too long",
+                    llm_provider="anthropic",
+                    model="claude-sonnet-4-5-20250929",
+                )
+            ),
         ):
             with pytest.raises(Exception, match="Message too long for anthropic"):
                 await anthropic_client.send_message(
@@ -201,11 +210,11 @@ class TestLiteLLMClient:
         """Test handling of bad request errors."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.BadRequestError(
-                message="Invalid request",
-                llm_provider="openai",
-                model="gpt-4o"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.BadRequestError(
+                    message="Invalid request", llm_provider="openai", model="gpt-4o"
+                )
+            ),
         ):
             with pytest.raises(Exception, match="Invalid request to openai"):
                 await openai_client.send_message(
@@ -220,11 +229,11 @@ class TestLiteLLMClient:
         """Test handling of service unavailable errors (should retry)."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.ServiceUnavailableError(
-                message="Service unavailable",
-                llm_provider="ollama",
-                model="llama2"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.ServiceUnavailableError(
+                    message="Service unavailable", llm_provider="ollama", model="llama2"
+                )
+            ),
         ):
             with pytest.raises(litellm.ServiceUnavailableError):
                 await ollama_client.send_message(
@@ -239,11 +248,13 @@ class TestLiteLLMClient:
         """Test handling of connection errors (should retry)."""
         with patch(
             "litellm.acompletion",
-            new=AsyncMock(side_effect=litellm.APIConnectionError(
-                message="Connection failed",
-                llm_provider="anthropic",
-                model="claude-sonnet-4-5-20250929"
-            ))
+            new=AsyncMock(
+                side_effect=litellm.APIConnectionError(
+                    message="Connection failed",
+                    llm_provider="anthropic",
+                    model="claude-sonnet-4-5-20250929",
+                )
+            ),
         ):
             with pytest.raises(litellm.APIConnectionError):
                 await anthropic_client.send_message(
@@ -300,7 +311,7 @@ class TestLiteLLMFactory:
         config = LLMConfig(
             provider="anthropic",
             model_name="claude-sonnet-4-5-20250929",
-            api_key_env_var="ANTHROPIC_API_KEY"
+            api_key_env_var="ANTHROPIC_API_KEY",
         )
 
         # Create client
@@ -323,9 +334,7 @@ class TestLiteLLMFactory:
 
         # Create config for Ollama (no API key)
         config = LLMConfig(
-            provider="ollama",
-            model_name="llama2",
-            api_base="http://localhost:11434"
+            provider="ollama", model_name="llama2", api_base="http://localhost:11434"
         )
 
         # Create client

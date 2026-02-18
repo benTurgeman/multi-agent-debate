@@ -7,7 +7,7 @@ import { Page, expect } from '@playwright/test';
 
 export interface WebSocketMessage {
   type: string;
-  payload?: any;
+  payload?: unknown;
   timestamp?: string;
 }
 

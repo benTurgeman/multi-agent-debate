@@ -439,7 +439,10 @@ class TestInvokeJudge:
         assert isinstance(result, JudgeResult)
         assert len(result.agent_scores) == len(debate_state.config.agents)
         assert all(score.score == 5.0 for score in result.agent_scores)
-        assert "Unable to parse" in result.summary or "failed to parse" in result.summary.lower()
+        assert (
+            "Unable to parse" in result.summary
+            or "failed to parse" in result.summary.lower()
+        )
 
 
 class TestExecuteRound:

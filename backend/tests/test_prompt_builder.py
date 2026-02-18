@@ -20,7 +20,7 @@ def sample_llm_config():
     return LLMConfig(
         provider=ModelProvider.ANTHROPIC,
         model_name="claude-3-5-sonnet-20241022",
-        api_key_env_var="ANTHROPIC_API_KEY"
+        api_key_env_var="ANTHROPIC_API_KEY",
     )
 
 
@@ -35,7 +35,7 @@ def sample_agent(sample_llm_config):
         stance="Pro",
         system_prompt="You are an optimistic technologist who believes AI will benefit humanity.",
         temperature=1.0,
-        max_tokens=1024
+        max_tokens=1024,
     )
 
 
@@ -50,7 +50,7 @@ def sample_judge_config(sample_llm_config):
         stance="Neutral",
         system_prompt="You are a fair and impartial debate judge.",
         temperature=0.7,
-        max_tokens=2048
+        max_tokens=2048,
     )
 
 
@@ -65,7 +65,7 @@ def sample_messages():
             round_number=1,
             turn_number=0,
             stance="Pro",
-            timestamp=datetime.now(timezone.utc)
+            timestamp=datetime.now(timezone.utc),
         ),
         Message(
             agent_id="agent2",
@@ -74,7 +74,7 @@ def sample_messages():
             round_number=1,
             turn_number=1,
             stance="Con",
-            timestamp=datetime.now(timezone.utc)
+            timestamp=datetime.now(timezone.utc),
         ),
     ]
 
@@ -92,7 +92,7 @@ class TestBuildDebaterPrompt:
             agent=sample_agent,
             topic=topic,
             current_round=current_round,
-            total_rounds=total_rounds
+            total_rounds=total_rounds,
         )
 
         # Check that all components are present
@@ -107,10 +107,7 @@ class TestBuildDebaterPrompt:
     def test_build_debater_prompt_structure(self, sample_agent):
         """Test that the prompt has proper structure."""
         prompt = build_debater_prompt(
-            agent=sample_agent,
-            topic="Test topic",
-            current_round=1,
-            total_rounds=3
+            agent=sample_agent, topic="Test topic", current_round=1, total_rounds=3
         )
 
         # Should not have leading/trailing whitespace
@@ -135,7 +132,7 @@ class TestBuildJudgePrompt:
                 stance="Pro",
                 system_prompt="Test",
                 temperature=1.0,
-                max_tokens=1024
+                max_tokens=1024,
             ),
             AgentConfig(
                 agent_id="agent2",
@@ -145,14 +142,12 @@ class TestBuildJudgePrompt:
                 stance="Con",
                 system_prompt="Test",
                 temperature=1.0,
-                max_tokens=1024
+                max_tokens=1024,
             ),
         ]
 
         prompt = build_judge_prompt(
-            topic=topic,
-            agents=agents,
-            judge_config=sample_judge_config
+            topic=topic, agents=agents, judge_config=sample_judge_config
         )
 
         # Check components
@@ -167,7 +162,9 @@ class TestBuildJudgePrompt:
         assert "agent_scores" in prompt
         assert "winner_id" in prompt
 
-    def test_build_judge_prompt_multiple_agents(self, sample_judge_config, sample_llm_config):
+    def test_build_judge_prompt_multiple_agents(
+        self, sample_judge_config, sample_llm_config
+    ):
         """Test judge prompt with multiple agents."""
         agents = [
             AgentConfig(
@@ -178,15 +175,13 @@ class TestBuildJudgePrompt:
                 stance=f"Stance {i}",
                 system_prompt="Test",
                 temperature=1.0,
-                max_tokens=1024
+                max_tokens=1024,
             )
             for i in range(1, 4)
         ]
 
         prompt = build_judge_prompt(
-            topic="Test topic",
-            agents=agents,
-            judge_config=sample_judge_config
+            topic="Test topic", agents=agents, judge_config=sample_judge_config
         )
 
         # All agents should be listed
@@ -200,10 +195,7 @@ class TestFormatHistoryForContext:
     def test_format_history_empty(self):
         """Test formatting with no history."""
         context = format_history_for_context(
-            history=[],
-            topic="Test topic",
-            current_round=1,
-            total_rounds=3
+            history=[], topic="Test topic", current_round=1, total_rounds=3
         )
 
         assert "Test topic" in context
@@ -214,10 +206,7 @@ class TestFormatHistoryForContext:
     def test_format_history_with_messages(self, sample_messages):
         """Test formatting with message history."""
         context = format_history_for_context(
-            history=sample_messages,
-            topic="AI debate",
-            current_round=2,
-            total_rounds=3
+            history=sample_messages, topic="AI debate", current_round=2, total_rounds=3
         )
 
         assert "AI debate" in context
@@ -231,10 +220,7 @@ class TestFormatHistoryForContext:
     def test_format_history_message_order(self, sample_messages):
         """Test that messages are in correct order."""
         context = format_history_for_context(
-            history=sample_messages,
-            topic="Test",
-            current_round=2,
-            total_rounds=3
+            history=sample_messages, topic="Test", current_round=2, total_rounds=3
         )
 
         # First message should appear before second
@@ -245,10 +231,7 @@ class TestFormatHistoryForContext:
     def test_format_history_includes_round_and_turn(self, sample_messages):
         """Test that round and turn numbers are included."""
         context = format_history_for_context(
-            history=sample_messages,
-            topic="Test",
-            current_round=2,
-            total_rounds=3
+            history=sample_messages, topic="Test", current_round=2, total_rounds=3
         )
 
         assert "[Round 1, Turn 1]" in context
@@ -261,10 +244,7 @@ class TestFormatHistoryForJudge:
     def test_format_history_for_judge(self, sample_messages):
         """Test formatting complete history for judge."""
         topic = "AI debate topic"
-        context = format_history_for_judge(
-            history=sample_messages,
-            topic=topic
-        )
+        context = format_history_for_judge(history=sample_messages, topic=topic)
 
         assert topic in context
         assert "FULL TRANSCRIPT:" in context
@@ -277,20 +257,14 @@ class TestFormatHistoryForJudge:
 
     def test_format_history_for_judge_separator(self, sample_messages):
         """Test that messages are separated properly."""
-        context = format_history_for_judge(
-            history=sample_messages,
-            topic="Test"
-        )
+        context = format_history_for_judge(history=sample_messages, topic="Test")
 
         # Should have separator between messages
         assert "---" in context
 
     def test_format_history_for_judge_empty(self):
         """Test formatting with empty history."""
-        context = format_history_for_judge(
-            history=[],
-            topic="Test topic"
-        )
+        context = format_history_for_judge(history=[], topic="Test topic")
 
         assert "Test topic" in context
         assert "FULL TRANSCRIPT:" in context

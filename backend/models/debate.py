@@ -73,7 +73,9 @@ class DebateConfig(BaseModel):
 class DebateState(BaseModel):
     """Current state of a debate."""
 
-    debate_id: str = Field(default_factory=lambda: str(uuid4()), description="Unique debate ID")
+    debate_id: str = Field(
+        default_factory=lambda: str(uuid4()), description="Unique debate ID"
+    )
     config: DebateConfig = Field(..., description="Debate configuration")
     status: DebateStatus = Field(
         default=DebateStatus.CREATED, description="Current debate status"
@@ -91,7 +93,7 @@ class DebateState(BaseModel):
     )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        description="When the debate was created"
+        description="When the debate was created",
     )
     started_at: Optional[datetime] = Field(
         default=None, description="When the debate started"

@@ -132,7 +132,7 @@ class AgentOrchestrator:
 
                 if attempt < self.max_turn_retries:
                     # Exponential backoff: 2^attempt seconds
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.info(f"Retrying in {wait_time} seconds...")
                     await asyncio.sleep(wait_time)
 

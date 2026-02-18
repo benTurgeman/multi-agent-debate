@@ -109,7 +109,7 @@ class LiteLLMClient(BaseLLMClient):
                 text = response.choices[0].message.content
 
                 # Log usage if available
-                if hasattr(response, 'usage') and response.usage:
+                if hasattr(response, "usage") and response.usage:
                     logger.debug(
                         f"Received response from {self.provider} - "
                         f"Prompt tokens: {response.usage.prompt_tokens}, "
